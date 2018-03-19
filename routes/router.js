@@ -17,7 +17,7 @@ router.post('/', (req, res, next) => {
   }
 
   if (req.body.email && req.body.username && req.body.password && req.body.passwordConf) {
-
+    
     let userData = {
       email: req.body.email,
       username: req.body.username,
@@ -149,6 +149,7 @@ router.post("/new-comment", (req, res) => {
   });
 });
 
+// GET page for creating a new post
 router.get("/new-entry", (req, res) => {
   User.findById(req.session.userId).exec((error, user) => {
     if (error) {
@@ -168,6 +169,8 @@ router.get("/new-entry", (req, res) => {
   });
 });
 
+
+// POST the new blog post to mongodb
 router.post("/new-entry", (req, res) => {
   User.findById(req.session.userId).exec((error, user) => {
     if (error) {
