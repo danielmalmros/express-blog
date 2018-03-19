@@ -1,4 +1,12 @@
 <% include header %>
+<div class="hero-block p-md-5 text-center bg-light">
+  <div class="col-md-5 mx-auto my-5">
+    <h1 class="display-4 font-weight-normal">Random posts</h1>
+    <p class="lead font-weight-normal">Feel free to add any crazy post you want! This is a free post forum for all.</p>
+    <a class="btn btn-primary" href="/new-entry">Add new post</a>
+  </div>
+</div>
+
 <% if (posts.length) { %>
   <% posts.forEach(function(entry) { %>
     <% include entry %>

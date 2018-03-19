@@ -1,24 +1,27 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 var exports = module.exports = {};
 
+// Schema for Comments - exported to blog schema!
 exports.commentSchema = new Schema({
     author: String,
     body: String,
-    date: { type: Date, default: Date.now }
+    date: {
+        type: Date,
+        default: Date.now
+    }
 });
 
+// Schema for blog posts - comment schema is used here!
 exports.blogSchema = new Schema({
     title:  String,
     author: String,
     body:   String,
     comments: [ exports.commentSchema ],
-    date: { type: Date, default: Date.now },
-    hidden: Boolean,
-    meta: {
-        votes: Number,
-        favs:  Number
+    date: {
+        type: Date,
+        default: Date.now
     }
 });
 
-exports.Blog = mongoose.model('Blog',exports.blogSchema);
+exports.Blog = mongoose.model('Blog', exports.blogSchema);

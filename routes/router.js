@@ -1,37 +1,31 @@
-var express = require('express');
-var router = express.Router();
-var User = require('../models/user');
-var Posts = require('../models/posts');
-var entries = require("../components/entries");
-var app = express();
+let express = require('express');
+let router = express.Router();
+let User = require('../models/user');
+let Posts = require('../models/posts');
+let entries = require("../components/entries");
+let app = express();
 
-var entries = [];
-app.locals.entries = entries;
-var nextID = 0;
+// POST route for creating a user!
+router.post('/', (req, res, next) => {
 
-//POST route for updating data
-router.post('/', function (req, res, next) {
-  // confirm that user typed same password twice
+  // Confirm that user typed same password twice
   if (req.body.password !== req.body.passwordConf) {
-    var err = new Error('Passwords do not match.');
+    let err = new Error('Passwords do not match.');
     err.status = 400;
     res.send("passwords dont match");
     return next(err);
   }
 
-  if (req.body.email &&
-    req.body.username &&
-    req.body.password &&
-    req.body.passwordConf) {
+  if (req.body.email && req.body.username && req.body.password && req.body.passwordConf) {
 
-    var userData = {
+    let userData = {
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
       passwordConf: req.body.passwordConf,
     }
 
-    User.create(userData, function (error, user) {
+    User.create(userData, (error, user) => {
       if (error) {
         return next(error);
       } else {
@@ -41,9 +35,10 @@ router.post('/', function (req, res, next) {
     });
 
   } else if (req.body.logemail && req.body.logpassword) {
-    User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
+
+    User.authenticate(req.body.logemail, req.body.logpassword, (error, user) => {
       if (error || !user) {
-        var err = new Error('Wrong email or password.');
+        let err = new Error('Wrong email or password.');
         err.status = 401;
         return next(err);
       } else {
@@ -52,87 +47,87 @@ router.post('/', function (req, res, next) {
       }
     });
   } else {
-    var err = new Error('All fields required.');
+    let err = new Error('All fields required.');
     err.status = 400;
     return next(err);
   }
 })
 
-// GET blogs API
-router.get('/blogs', function (req, res, next) {
-  User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error);
+// GET blogs API - To get all blogs from mongodb
+router.get('/blogs', (req, res, next) => {
+  User.findById(req.session.userId).exec((error, user) => {
+    if (error) {
+      return next(error);
+    } else {
+      if (user === null) {
+        let err = new Error('Not authorized! Go back!');
+        err.status = 400;
+        return next(err);
       } else {
-        if (user === null) {
-          var err = new Error('Not authorized! Go back!');
-          err.status = 400;
-          return next(err);
-        } else {
-          Posts.Blog.find({}, function (err, posts) {
-            if (err) {
-              console.log(err);
-              res.send(err);
-            }
-
-            console.log(posts.comments);
-
-            res.render("blogs", {
-              posts: posts
-            });
+        Posts.Blog.find({}, (err, posts) => {
+          if (err) {
+            console.log(err);
+            res.send(err);
+          }
+          res.render("blogs", {
+            posts: posts
           });
-        }
+        });
       }
-    });
+    }
+  });
 });
 
-// GET for logout logout
-router.get('/logout', function (req, res, next) {
+// GET for logout 
+router.get('/logout', (req, res, next) => {
   if (req.session) {
-    // delete session object
-    req.session.destroy(function (err) {
+    // Delete session object - so user have to login again
+    req.session.destroy((err) => {
       if (err) {
         return next(err);
       } else {
+        // Redirect to index
         return res.redirect('/');
       }
     });
   }
 });
 
-router.get("/new-comment", function (req, res) {
-  User.findById(req.session.userId)
-    .exec(function (error, user) {
+// GET new comment page
+router.get("/new-comment", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
       if (error) {
         return next(error);
       } else {
         if (user === null) {
-          var err = new Error('Not authorized! Go back!');
+          let err = new Error('Not authorized! Go back!');
           err.status = 400;
           return next(err);
         } else {
-          var currentID = req.query.id;
-          res.render("new-comment", { id: currentID });
+          let currentID = req.query.id;
+          res.render("new-comment", {
+            id: currentID
+          });
         }
       }
     });
 });
 
-router.post("/new-comment", function (req, res) {
-  User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error);
+// POST a new comment on the submit
+router.post("/new-comment", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
+    if (error) {
+      return next(error);
+    } else {
+      if (user === null) {
+        let err = new Error('Not authorized! Go back!');
+        err.status = 400;
+        return next(err);
       } else {
-        if (user === null) {
-          var err = new Error('Not authorized! Go back!');
-          err.status = 400;
-          return next(err);
-        } else {
-          var id = req.query.containerID;
+        // Find current blog id and use that to find and update the mongodb with the new comment
+        let id = req.query.containerID;
 
-          Posts.Blog.findByIdAndUpdate(id, {
+        Posts.Blog.findByIdAndUpdate(id, {
             $push: {
               comments: {
                 author: user.username,
@@ -140,68 +135,67 @@ router.post("/new-comment", function (req, res) {
               }
             }
           }, {
-              upsert: true
-            },
-            (err) => {
-              if (err) {
-                res.send('Error updating single wins!');
-              } else {
-                res.redirect('/blogs');
-              }
-            });
-        }
-      }
-    });
-});
-
-router.get("/new-entry", function (req, res) {
-  User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error);
-      } else {
-        if (user === null) {
-          var err = new Error('Not authorized! Go back!');
-          err.status = 400;
-          return next(err);
-        } else {
-          var currentID = req.query.id;
-          res.render("new-entry", { id: currentID });
-        }
-      }
-    });
-});
-
-router.post("/new-entry", function (req, res) {
-  User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error);
-      } else {
-        if (user === null) {
-          var err = new Error('Not authorized! Go back!');
-          err.status = 400;
-          return next(err);
-        } else {
-
-          let instance = new Posts.Blog({
-            title: req.body.title,
-            author: user.username,
-            body: req.body.body,
-          });
-
-          instance.save(function (err, Blog) {
+            upsert: true
+          },
+          (err) => {
             if (err) {
-              return console.error(err);
+              res.send('Error');
+            } else {
+              res.redirect('/blogs');
             }
-            console.log("Save success: ", Blog);
           });
-
-          res.redirect('/blogs');
-        }
       }
-    });
+    }
+  });
 });
 
+router.get("/new-entry", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
+    if (error) {
+      return next(error);
+    } else {
+      if (user === null) {
+        let err = new Error('Not authorized! Go back!');
+        err.status = 400;
+        return next(err);
+      } else {
+        let currentID = req.query.id;
+        res.render("new-entry", {
+          id: currentID
+        });
+      }
+    }
+  });
+});
+
+router.post("/new-entry", (req, res) => {
+  User.findById(req.session.userId).exec((error, user) => {
+    if (error) {
+      return next(error);
+    } else {
+      if (user === null) {
+        let err = new Error('Not authorized! Go back!');
+        err.status = 400;
+        return next(err);
+      } else {
+        // Create the objects that needs to be saved in mongodb
+        let instance = new Posts.Blog({
+          title: req.body.title,
+          author: user.username,
+          body: req.body.body,
+        });
+
+        // Save the new created blog post
+        instance.save((err, Blog) => {
+          if (err) {
+            return console.error(err);
+          }
+        });
+
+        res.redirect('/blogs');
+      }
+    }
+  });
+});
 
 module.exports = router;

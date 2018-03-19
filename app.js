@@ -1,29 +1,30 @@
-var express = require('express');
-var app = express();
-var path = require('path');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-var logger = require("morgan");
+let express = require('express');
+let app = express();
+let path = require('path');
+let bodyParser = require('body-parser');
+let mongoose = require('mongoose');
+let session = require('express-session');
+let MongoStore = require('connect-mongo')(session);
+let logger = require("morgan");
 
 app.use(logger("dev"));
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-//connect to MongoDB
-mongoose.connect('mongodb://localhost/testForAuth');
-var db = mongoose.connection;
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/express-blog');
+let db = mongoose.connection;
 
-//handle mongo error
+// Handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-  // we're connected!
+// Conneceted to mongodb
+db.once('open', () => {
+  console.log('Connected to database!');
 });
 
-//use sessions for tracking logins
+// Use sessions for tracking logins
 app.use(session({
   secret: 'work hard',
   resave: true,
@@ -33,36 +34,37 @@ app.use(session({
   })
 }));
 
-// parse incoming requests
+// Parse incoming requests
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// serve static files from template
-app.use(express.static(__dirname + '/templateLogReg'));
+// Serve static files - html, css and images
+app.use(express.static(__dirname + '/static'));
 
-// include routes
-var routes = require('./routes/router');
+// Include routes
+let routes = require('./routes/router');
 app.use('/', routes);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  var err = new Error('File Not Found');
+// Catch 404 and forward to error handler
+app.use((req, res, next) => {
+  let err = new Error('File Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handler
-// define as the last app.use callback
-app.use(function (err, req, res, next) {
+// Error handler
+// Define as the last app.use callback
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send(err.message);
 });
 
-app.get("/", function(req, res) {
+// Render static index
+app.get("/", (req, res) => {
     res.render("index");
 });
 
-// listen on port 3000
-app.listen(3000, function () {
+// Listen on port 3000
+app.listen(3000, () => {
   console.log('Express app listening on port 3000');
 });
