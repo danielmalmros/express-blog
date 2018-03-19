@@ -2,7 +2,6 @@ let express = require('express');
 let router = express.Router();
 let User = require('../models/user');
 let Posts = require('../models/posts');
-let entries = require("../components/entries");
 let app = express();
 
 // POST route for creating a user!
@@ -17,7 +16,7 @@ router.post('/', (req, res, next) => {
   }
 
   if (req.body.email && req.body.username && req.body.password && req.body.passwordConf) {
-    
+
     let userData = {
       email: req.body.email,
       username: req.body.username,
