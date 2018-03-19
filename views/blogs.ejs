@@ -1,0 +1,8 @@
+<% include header %>
+<% if (posts.length) { %>
+  <% posts.forEach(function(entry) { %>
+    <% include entry %>
+  <% }) %>
+<% } else { %>   No entries! <a href="/new-entry">Add entry!</a>
+<% } %>
+<% include footer %>

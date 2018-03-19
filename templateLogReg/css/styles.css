@@ -1,0 +1,15 @@
+.media {
+	display: flex;
+	flex-direction: column;
+	background: white;
+	margin-bottom: 30px;
+	color: #638DB6;
+}
+.user_name{
+    font-size:14px;
+    font-weight: bold;
+}
+
+.card {
+	margin-bottom: 30px;
+}

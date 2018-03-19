@@ -1,0 +1,16 @@
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h4 class="card-title"><%= entry.title %></h4>
+        <p>Author: <%= entry.author %></p>
+        <h6><%= entry.date %></h6>
+        <p class="card-text">
+            <%= entry.body %>
+        </p>
+        <div class="panel-body">
+                <% entry.comments.forEach(function(comment) { %>
+                    <% include comment %>
+                        <% }) %>
+            </div>
+        <a href="/new-comment?containerID=<%= entry.id %>" class="btn btn-primary">Add comment!</a>
+    </div>
+</div>
