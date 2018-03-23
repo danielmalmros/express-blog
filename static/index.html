@@ -16,17 +16,18 @@
 	<div class="container login-block">
 		<div class="row">
 			<div class="col-sm">
-				<form action="/" method="post">
-					<div class="form-group">
+				<div class="form">
+					<form class="login-form" action="/" method="post">
 						<input type="text" name="logemail" placeholder="E-mail" required="">
-					</div>
-					<div class="form-group">
 						<input type="password" name="logpassword" placeholder="Password" required="">
-					</div>
-					<input class="btn btn-primary" type="submit" value="Login">
-				</form>
+						<button>login</button>
+						<p class="message">Not registered?
+							<a href="/register.html">Create an account</a>
+						</p>
+					</form>
+				</div>
 			</div>
-			<div class="col-sm">
+			<!-- <div class="col-sm">
 				<form action="/" method="post">
 					<div class="form-group">
 						<input type="text" name="email" placeholder="E-mail" required="">
@@ -42,7 +43,7 @@
 					</div>
 					<input class="btn btn-primary" type="submit" value="Register">
 				</form>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </body>
