@@ -31,7 +31,6 @@ http://localhost:3000
 * Create users
 * Create posts that are stored in MongDB
 * Add comment to each blog post and the comment wil be stored with that post
-* 
 
 ## Contain:
 
