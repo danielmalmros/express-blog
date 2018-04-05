@@ -2,25 +2,44 @@
 
 This is a small school project!
 
-This application uses Express and Mongodb
+This application uses Express and Mongodb to create a simple intern blog system.
 
-## Installation
+## Installation / setup
 
-Install the dependencies in root
+Install the dependencies in root folder
 
 ```sh
 $ npm install
+```
+Start your mongodb
+
+```sh
+$ mongod
 ```
 Run app in root with nodemon
 
 ```sh
 $ nodemon
 ```
+Go to your localhost
 
+```sh
+http://localhost:3000
+```
 ## Features:
 
-* Comming soon
+* Create users
+* Create posts that are stored in MongDB
+* Add comment to each blog post and the comment wil be stored with that post
+* 
 
 ## Contain:
 
-* Comming soon
+* Express
+* BodyParser
+* Mongoose
+* Express-session
+* Connect-mongo
+* Morgan
+* Bcrypt
+* Ejs
