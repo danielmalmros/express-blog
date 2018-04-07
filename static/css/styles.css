@@ -92,7 +92,7 @@
     font-size: 14px;
 }
 
-.form button {
+.form .submit {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
@@ -107,9 +107,9 @@
     cursor: pointer;
 }
 
-.form button:hover,
-.form button:active,
-.form button:focus {
+.form .submit:hover,
+.form .submit:active,
+.form .submit:focus {
     background: #2c3e50;
 }
 

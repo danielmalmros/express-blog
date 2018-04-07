@@ -1,6 +1,7 @@
 let mongoose = require('mongoose');
 let bcrypt = require('bcrypt');
 
+// Schema for users 
 let UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -17,46 +18,17 @@ let UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-  },
-  passwordConf: {
-    type: String,
-    required: true,
   }
-});
+})
 
-// Authenticate input against database
-UserSchema.statics.authenticate = (email, password, callback) => {
-  User.findOne({
-    email: email
-  }).exec((err, user) => {
-    if (err) {
-      return callback(err)
-    } else if (!user) {
-      let err = new Error('User not found.');
-      err.status = 401;
-      return callback(err);
-    }
-    bcrypt.compare(password, user.password, (err, result) => {
-      if (result === true) {
-        return callback(null, user);
-      } else {
-        return callback();
-      }
-    })
-  });
+// Using the bcrypt to hash password here
+UserSchema.methods.hashPassword = function (password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 }
 
-// Hashing a password before saving it to the database
-UserSchema.pre('save', function (next) {
-  let user = this;
-  bcrypt.hash(user.password, 10, function (err, hash) {
-    if (err) {
-      return next(err);
-    }
-    user.password = hash;
-    next();
-  })
-});
+// Using bcrypt to compare password when user try to login
+UserSchema.methods.comparePassword = function (password, hash) {
+  return bcrypt.compareSync(password, hash)
+}
 
-let User = mongoose.model('User', UserSchema);
-module.exports = User;
+module.exports = mongoose.model('users', UserSchema, 'users')

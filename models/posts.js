@@ -2,7 +2,7 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 var exports = module.exports = {};
 
-// Schema for Comments - exported to blog schema!
+// Schema for comments - exported to blog schema!
 exports.commentSchema = new Schema({
     author: String,
     body: String,

@@ -35,9 +35,11 @@ http://localhost:3000
 ## Contain:
 
 * Express
+* PassportJS
 * BodyParser
 * Mongoose
 * Express-session
+* Cookie-parser
 * Connect-mongo
 * Morgan
 * Bcrypt
